@@ -7,6 +7,14 @@ pragma solidity ^0.8.9;
 contract Lock {
     uint public unlockTime;
     address payable public owner;
+    mapping(address => Engagement) public escrow;
+
+    struct Engagement {
+        address buyer;
+        address tasker;
+        address middleman;
+        int256 amount;
+    }
 
     event Withdrawal(uint amount, uint when);
 
@@ -18,6 +26,10 @@ contract Lock {
 
         unlockTime = _unlockTime;
         owner = payable(msg.sender);
+    }
+
+    function deposit(int256 amount, address tasker, address middleman) public payable {
+        escrow[msg.sender] = Engagement(msg.sender, tasker, middleman, amount);
     }
 
     function withdraw() public {
